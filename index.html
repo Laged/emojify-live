@@ -10,24 +10,6 @@
         <style>
             :root {
                 --emoji: "";
-                --opacityFrom: 0;
-                --opacityTo: 0;
-            }
-            @keyframes opacityIn {
-                from {
-                    opacity: var(--opacityFrom);
-                }
-                to {
-                    opacity: var(--opacityTo);
-                }
-            }
-            @keyframes opacityOut {
-                from {
-                    opacity: var(--opacityFrom);
-                }
-                to {
-                    opacity: var(--opacityTo);
-                }
             }
             * {
                 margin: 0;
@@ -73,19 +55,42 @@
             #result {
                 font-size: 20ch;
                 text-align: center;
+                background-color: transparent;
             }
             #result::before {
                 content: var(--emoji);
             }
-            .opacityIn {
-                animation-name: opacityIn;
-                animation-duration: 1s;
-                opacity: var(--opacityTo);
+            @keyframes phase1 {
+                from {
+                    opacity: 0;
+                    transform:rotate(0deg); 
+                }
+                to {
+                    opacity: 50;
+                    transform:rotate(180deg);
+                }
             }
-            .opacityOut {
-                animation-name: opacityOut;
+            .phase1 {
+                animation-name: phase1;
                 animation-duration: 1s;
-                opacity: var(--opacityTo);
+                opacity: 0;
+                transform:rotate(180deg);
+            }
+            @keyframes phase2 {
+                from {
+                    opacity: 50;
+                    transform:rotate(180deg);
+                }
+                to {
+                    opacity: 0;
+                    transform:rotate(180deg);
+                }
+            }
+            .phase2 {
+                animation-name: phase2;
+                animation-duration: 1s;
+                opacity: 0;
+                transform:rotate(180deg);
             }
         </style>
     </head>
@@ -97,7 +102,7 @@
                 </h1>
             </div>
             <div id="commands">
-                <input id="command" value="💩⩼⩐50⩼⩐0"/>
+                <input id="command" value="💩⩐0⩼⩐50⌭180⩼⩐0"/>
                 <button id="submit" onclick="emojify()">
                     Emojify
                 </button>
@@ -108,22 +113,18 @@
     <script charset="utf-8">
             const emojify = () => {
                 const root = document.querySelector(":root");
-                // Case: 💩⩼⩐50⩼⩐0
-                // Phase 💩: Set emoji to 💩
+                const result = document.getElementById("result");
+                // Case: 💩⩐0⩼⩐50⌭180⩼⩐0
+                // Phase 0: Set emoji to 💩
                 //const emoji = "'"+document.getElementById("command").value+"'";
                 const emoji = "'💩'";
                 root.style.setProperty("--emoji", emoji);
-                // Phase ⩼⩐50: transition opacity to 50
-                const result = document.getElementById("result");
-                root.style.setProperty("--opacityFrom", 0)
-                root.style.setProperty("--opacityTo", 0.5)
-                result.classList.add('opacityIn');
+                // Phase ⩐0⩼⩐50⌭180: transition opacity from 0 to 50 and rotation from 0 to 180
+                result.classList.add('phase1');
                 // Phase: ⩼⩐0: transition opacity to 0
                 setTimeout(() => {
-                    result.classList.remove('opacityIn');
-                    root.style.setProperty("--opacityFrom", 0.5)
-                    root.style.setProperty("--opacityTo", 0)
-                    result.classList.add('opacityOut');
+                    result.classList.remove('phase1');
+                    result.classList.add('phase2');
                 }, 1000)
                 
             }
