@@ -1,10 +1,16 @@
 #!/usr/bin/python3
 import emoji
+import json
+
 
 known_operations = {
         "⌭" : {"name" : "rotate", "operand" : "int"},
         "⨳" : {"name" : "compose", "operand" : "emoji"},
+        "⩐" : {"name" : "opacity", "operand" : "int"}
 }
+
+# 0: Phase number, 1: duration, 2: opacity from, 3: opacity to, 4: rotation from, 5: rotation to
+csstemplate = "@keyframes phase{0} {{from {{opacity: {2}; transform: rotate({4}deg);}} to {{opacity: {3}; transform:rotate({5}deg);}}}} .phase{0} {{animation-name: phase{0}; animation-duration: {1}s; opacity: {4}; transform:rotate({5}deg);}} "
 
 
 def clean(code: str) -> str:
@@ -14,13 +20,13 @@ def clean(code: str) -> str:
 
 
 def tokenize(parts: list) -> list:
-    print(parts)
+    #print(parts)
     tokenlist = []
     for part in parts:
-        operations = []
+        operations = {}
         
         newsection = emoji.is_emoji(part[0])  # If the part starts with an emoji, it defines a new section
-        operations.append(("base", part[0] if newsection else "PREVIOUS"))
+        if newsection: operations["emoji"] = part[0]
         
         i = int(newsection)   # Iterate through part, ignoring the first emoji
         while i < len(part):  # Not pythonic, but seems to be the most efficient method 
@@ -40,19 +46,49 @@ def tokenize(parts: list) -> list:
             else:
                 raise NotImplementedError
 
-            operations.append((operation, operand))
+            operations[known_operations[operation]["name"]] = operand
 
         tokenlist.append(operations)
     
-    print(tokenlist)
+    #print(tokenlist)
     return tokenlist
+
+
+def cssify(tokens: list) -> str:
+    opacity = 100
+    rotation = 0
+    
+    phases = []   # List of phases for JS logic
+    css = """"""  # Multiline CSS string
+
+    for i, part in enumerate(tokens):
+        phase = {"phase":f"phase{i}", "duration":1000}
+        if "emoji" in part:
+            phase["emoji"] = part["emoji"]
+
+        
+        newrotation = part["rotation"] if "rotation" in part else rotation
+        newopacity = part["opacity"] if "opacity" in part else opacity
+        
+        css += csstemplate.format(i, 1000, opacity, newopacity, rotation, newrotation)
+        
+        rotation = newrotation
+        opacity = newopacity
+
+        phases.append(phase)
+
+    return json.dumps({"phases":phases, "css":css})
 
 
 def main():
     code = input("Values to parse: ")
     code = clean(code)
     tokens = tokenize(code)
+    payload = cssify(tokens)
+    print(payload)
 
 
 if __name__ == "__main__":
     main()
+
+
