@@ -60,38 +60,6 @@
             #result::before {
                 content: var(--emoji);
             }
-            @keyframes phase1 {
-                from {
-                    opacity: 0;
-                    transform:rotate(0deg); 
-                }
-                to {
-                    opacity: 50;
-                    transform:rotate(180deg);
-                }
-            }
-            .phase1 {
-                animation-name: phase1;
-                animation-duration: 1s;
-                opacity: 0;
-                transform:rotate(180deg);
-            }
-            @keyframes phase2 {
-                from {
-                    opacity: 50;
-                    transform:rotate(180deg);
-                }
-                to {
-                    opacity: 0;
-                    transform:rotate(180deg);
-                }
-            }
-            .phase2 {
-                animation-name: phase2;
-                animation-duration: 1s;
-                opacity: 0;
-                transform:rotate(180deg);
-            }
         </style>
     </head>
     <body>
@@ -112,21 +80,69 @@
     </body>
     <script charset="utf-8">
             const emojify = () => {
+                // TODO: fetch from actual API w/ query
+                const css = `
+                @keyframes phase1 {
+                    from {
+                        opacity: 0;
+                        transform:rotate(0deg); 
+                    }
+                    to {
+                        opacity: 50;
+                        transform:rotate(180deg);
+                    }
+                }
+                .phase1 {
+                    animation-name: phase1;
+                    animation-duration: 1s;
+                    opacity: 0;
+                    transform:rotate(180deg);
+                }
+                @keyframes phase2 {
+                    from {
+                        opacity: 50;
+                        transform:rotate(180deg);
+                    }
+                    to {
+                        opacity: 0;
+                        transform:rotate(180deg);
+                    }
+                }
+                .phase2 {
+                    animation-name: phase2;
+                    animation-duration: 9s;
+                    opacity: 0;
+                    transform:rotate(180deg);
+                }
+                `;
+                const phases = [{ emoji: '💩', phase: "phase1", duration: 1000 }, { phase: "phase2", duration: 9000 }];
+                const dummyResponse = {
+                    phases,
+                    css
+                }
+                // Create and add css
+                const sheet = document.createElement("style");
+                sheet.innerText = dummyResponse.css;
+                document.head.appendChild(sheet);
+                // Initialize elements to manipulate
                 const root = document.querySelector(":root");
                 const result = document.getElementById("result");
-                // Case: 💩⩐0⩼⩐50⌭180⩼⩐0
-                // Phase 0: Set emoji to 💩
-                //const emoji = "'"+document.getElementById("command").value+"'";
-                const emoji = "'💩'";
-                root.style.setProperty("--emoji", emoji);
-                // Phase ⩐0⩼⩐50⌭180: transition opacity from 0 to 50 and rotation from 0 to 180
-                result.classList.add('phase1');
-                // Phase: ⩼⩐0: transition opacity to 0
-                setTimeout(() => {
-                    result.classList.remove('phase1');
-                    result.classList.add('phase2');
-                }, 1000)
-                
+                // Iterate through phases and set animations
+                let delay = 0;
+                phases?.forEach(({emoji, phase, duration}) => {
+                    if (emoji) {
+                        root.style.setProperty("--emoji", "'"+emoji+"'");
+                    }
+                    if(phase && duration) {
+                        setTimeout(() => {
+                            result.classList.add(phase);
+                        }, delay);
+                        setTimeout(() => {
+                            result.classList.remove(phase);
+                        }, duration+delay);
+                        delay += duration;
+                    }
+                });
             }
     </script>
 </html>
