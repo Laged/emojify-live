@@ -10,6 +10,24 @@
         <style>
             :root {
                 --emoji: "";
+                --opacityFrom: 0;
+                --opacityTo: 0;
+            }
+            @keyframes opacityIn {
+                from {
+                    opacity: var(--opacityFrom);
+                }
+                to {
+                    opacity: var(--opacityTo);
+                }
+            }
+            @keyframes opacityOut {
+                from {
+                    opacity: var(--opacityFrom);
+                }
+                to {
+                    opacity: var(--opacityTo);
+                }
             }
             * {
                 margin: 0;
@@ -59,6 +77,16 @@
             #result::before {
                 content: var(--emoji);
             }
+            .opacityIn {
+                animation-name: opacityIn;
+                animation-duration: 1s;
+                opacity: var(--opacityTo);
+            }
+            .opacityOut {
+                animation-name: opacityOut;
+                animation-duration: 1s;
+                opacity: var(--opacityTo);
+            }
         </style>
     </head>
     <body>
@@ -69,7 +97,7 @@
                 </h1>
             </div>
             <div id="commands">
-                <input id="command" value="&#128169"/>
+                <input id="command" value="💩⩼⩐50⩼⩐0"/>
                 <button id="submit" onclick="emojify()">
                     Emojify
                 </button>
@@ -80,8 +108,24 @@
     <script charset="utf-8">
             const emojify = () => {
                 const root = document.querySelector(":root");
-                const value = "'"+document.getElementById("command").value+"'";
-                root.style.setProperty("--emoji", value);
+                // Case: 💩⩼⩐50⩼⩐0
+                // Phase 💩: Set emoji to 💩
+                //const emoji = "'"+document.getElementById("command").value+"'";
+                const emoji = "'💩'";
+                root.style.setProperty("--emoji", emoji);
+                // Phase ⩼⩐50: transition opacity to 50
+                const result = document.getElementById("result");
+                root.style.setProperty("--opacityFrom", 0)
+                root.style.setProperty("--opacityTo", 0.5)
+                result.classList.add('opacityIn');
+                // Phase: ⩼⩐0: transition opacity to 0
+                setTimeout(() => {
+                    result.classList.remove('opacityIn');
+                    root.style.setProperty("--opacityFrom", 0.5)
+                    root.style.setProperty("--opacityTo", 0)
+                    result.classList.add('opacityOut');
+                }, 1000)
+                
             }
     </script>
 </html>
