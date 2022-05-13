@@ -8,6 +8,9 @@
         <link rel="icon"
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#128169;</text></svg>">
         <style>
+            :root {
+                --emoji: "";
+            }
             * {
                 margin: 0;
                 background-color: #fff;
@@ -49,6 +52,13 @@
             #emojify {
                 border: 1px solid #000000;
             }
+            #result {
+                font-size: 20ch;
+                text-align: center;
+            }
+            #result::before {
+                content: var(--emoji);
+            }
         </style>
     </head>
     <body>
@@ -64,17 +74,14 @@
                     Emojify
                 </button>
             </div>
-            <canvas id="emojify" width="400px" height="400px"/>
+            <div id="result"/>
         </div>
     </body>
     <script charset="utf-8">
             const emojify = () => {
-                const canvas = document.getElementById("emojify");
-                const ctx = canvas.getContext("2d");
-                ctx.font = canvas.width + 'px serif'
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.fillText("💩", canvas.width / 2, canvas.height / 2)
+                const root = document.querySelector(":root");
+                const value = "'"+document.getElementById("command").value+"'";
+                root.style.setProperty("--emoji", value);
             }
     </script>
 </html>
