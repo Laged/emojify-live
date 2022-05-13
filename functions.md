@@ -4,7 +4,7 @@ U+232D = Rotate
 	Rotate the the image clockwise by the given integer
 	
 ~~U+2118 = Swirl
-	ex. https://github.com/scikit-image/scikit-image/blob/v0.19.2/skimage/transform/_warps.py#L527-L588
+	ex. https://github.com/scikit-image/scikit-image/blob/v0.19.2/skimage/transform/_warps.py#L527-L588~~
 
 ~~U+2A50 = Transform Projection onto sphere
 	ex. https://codepen.io/globalcsr/pen/gGNMdL~~
