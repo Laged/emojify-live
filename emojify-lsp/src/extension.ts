@@ -1,3 +1,4 @@
+import * as child from 'child_process';
 import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -100,8 +101,10 @@ class WebviewPanel {
 		}, null, this._disposables);
 	}
 
-	public doRefactor(data: string) {
-		this._panel.webview.postMessage({ data: data });
+	public async doRefactor(data: string) {
+		child.exec(`python3 /Users/juuso/Github/emojify-live/api/nft.py "${data}"`, (err, stdout, stderr) => {
+			this._panel.webview.postMessage({ data: stdout });
+		})
 	}
 
 	public dispose() {
@@ -133,14 +136,54 @@ class WebviewPanel {
 				<link href="${webview.asWebviewUri(css)}" rel="stylesheet">
 			</head>
 			<body>
-                <div id="container">
-                    <div id="hero">
-                        <h1 id="title">
-                            emojify.live
-                        </h1>
-                    </div>
-                    <div id="result"/>
-                </div>
+			<div id="container">
+			<div id="hero">
+				<h1 id="title">
+					emojify.live
+				</h1>
+			</div>
+			<div id="keyboards">
+				<div class="keyboard" id="numbers">
+					<button id="q">1</button>
+					<button id="w">2</button>
+					<button id="e">3</button>
+					<button id="r">4</button>
+					<button id="t">5</button>
+					<button id="y">6</button>
+					<button id="u">7</button>
+					<button id="i">8</button>
+					<button id="o">9</button>
+					<button id="p">0</button>
+				</div>
+				<div class="keyboard" id="operators">
+					<button id="a"> </button>
+					<button id="s"> </button>
+					<button id="d"> </button>
+					<button id="f">⩼</button>
+					<button id="g">⦞</button>
+					<button id="h">⩐</button>
+					<button id="j">⌭</button>
+					<button id="k"> </button>
+					<button id="l"> </button>
+					<button id=","> </button>
+				</div>
+				<div class="keyboard" id="emojis">
+					<button id="z">💩</button>
+					<button id="x">😎</button>
+					<button id="c">😂</button>
+					<button id="v">😷</button>
+					<button id="b">🫠</button>
+					<button id="n">🤮</button>
+					<button id="m">🌚</button>
+					<button id="ä">🚀</button>
+					<button id="ö">🐵</button>
+					<button id="-">💦</button>
+				</div>
+			</div>
+			<div id="commands">
+			</div>
+			<div id="result"/>
+		</div>
 				<script src="${webview.asWebviewUri(js)}"></script>
 			</body>
 			</html>`;

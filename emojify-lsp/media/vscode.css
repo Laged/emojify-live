@@ -23,24 +23,53 @@ body {
 }
 #commands {
 	display: grid;
-	grid-template-columns: 1fr 10ch;
+	grid-template-columns: 3ch 1fr 6ch;
 	grid-auto-flow: row;
 	gap: 1rem;
 	background-color: #fff;
 }
-#command, #submit {
-	border: 1px solid #000000;
-
-	font-size: large;
+#clear, #command, #submit {
+	font-size: x-large;
+}
+#command {
+	border: 1px solid black;
+	margin: 0.2rem;
 }
 #submit {
-	border-radius: 1rem;
 	padding: 0.2rem;
 	background-color: #fff;
 	font-size: large;
 }
 #emojify {
 	border: 1px solid #000000;
+}
+#keyboards {
+	display: grid;
+	gap: 0.5rem;
+}
+#keyboards > div {
+	display: grid;
+	grid-template-columns: repeat(10, 3ch);
+	gap: 0.5rem;
+}
+#keyboards > div > button {
+	font-family: monospace;
+	font-size: 2ch;
+	width: 3ch;
+	height: 3ch;
+	padding: 0;
+}
+button {
+	border: 1px solid black;
+	border-right: 2px solid black;
+	border-bottom: 2px solid black;
+	border-radius: 0.5rem;
+}
+button:hover {
+	border: 2px solid black;
+}
+button:active {
+	transform: translateY(0.1rem)
 }
 #result {
 	font-size: 20ch;

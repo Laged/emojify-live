@@ -2,69 +2,59 @@ const vscode = acquireVsCodeApi();
 
 // Handle the message inside the webview
 window.addEventListener('message', event => {
-    evaluate(event.data.data);
+    const json = JSON.parse(event.data.data)
+    evaluate(json);
 });
 
-const evaluate = (_event) => {
-    // TODO: fetch from actual API w/ query
-    const css = `
-    @keyframes phase1 {
-        from {
-            opacity: 0;
-            transform:rotate(0deg);
+const evaluate = async (_event) => {
+    const hotkeys = (e) => {
+        const windowEvent = window.event ? event : e;
+        const code = windowEvent.keyCode;
+        if (code === 8) {
+            return clr();
+        } else if (code === 13) {
+            return emojify();
         }
-        to {
-            opacity: 50;
-            transform:rotate(180deg);
+        const key = String.fromCharCode(code).toLocaleLowerCase();
+        const elem = document.getElementById(key);
+        if (elem) {
+            elem.click();
         }
-    }
-    .phase1 {
-        animation-name: phase1;
-        animation-duration: 1s;
-        opacity: 0;
-        transform:rotate(180deg);
-    }
-    @keyframes phase2 {
-        from {
-            opacity: 50;
-            transform:rotate(180deg);
-        }
-        to {
-            opacity: 0;
-            transform:rotate(180deg);
-        }
-    }
-    .phase2 {
-        animation-name: phase2;
-        animation-duration: 9s;
-        opacity: 0;
-        transform:rotate(180deg);
-    }
-    `;
-    const phases = [{ emoji: '💩', phase: "phase1", duration: 1000 }, { phase: "phase2", duration: 9000 }];
-    const dummyResponse = {
-        phases,
-        css
-    }
+    };
+    //document.onkeydown = hotkeys;
+    const addCharacter = (char) => {
+        document.getElementById("command").value += char;
+    };
+    const keyboards = document.querySelectorAll(".keyboard");
+    keyboards?.forEach(keyboard => {
+        keyboard?.childNodes.forEach(button => {
+            button.addEventListener("click", function (event) {
+                addCharacter(event.target.innerText);
+            });
+        });
+    })
+    const { css, phases } = _event;
     // Create and add css
     const sheet = document.createElement("style");
-    sheet.innerText = dummyResponse.css;
+    sheet.innerText = css;
     document.head.appendChild(sheet);
     // Initialize elements to manipulate
-    const root = /** @type {HTMLElement} */ (document.querySelector(":root"));
-    const result = /** @type {HTMLElement} */ (document.getElementById("result"));
+    const root = document.querySelector(":root");
+    const result = document.getElementById("result");
     // Iterate through phases and set animations
     let delay = 0;
-    phases?.forEach(({emoji, phase, duration}) => {
-        if (emoji) {
-            root.style.setProperty("--emoji", "'"+emoji+"'");
-        }
-        if(phase && duration) {
+    phases?.forEach(({emoji, phase, duration}, i) => {
+        if(phase) {
             setTimeout(() => {
                 result.classList.add(phase);
+                if (emoji) {
+                    root.style.setProperty("--emoji", "'" + emoji + "'");
+                }
             }, delay);
             setTimeout(() => {
-                result.classList.remove(phase);
+                if (i < phases.length-1) {
+                    result.classList.remove(phase);
+                }
             }, duration+delay);
             delay += duration;
         }
