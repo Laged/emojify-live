@@ -100,34 +100,40 @@
             </div>
             <div id="keyboards">
                 <div class="keyboard" id="numbers">
-                    <button>1</button>
-                    <button>2</button>
-                    <button>3</button>
-                    <button>4</button>
-                    <button>5</button>
-                    <button>6</button>
-                    <button>7</button>
-                    <button>8</button>
-                    <button>9</button>
-                    <button>0</button>
-                </div>
-                <div class="keyboard" id="emojis">
-                    <button>💩</button>
-                    <button>😎</button>
-                    <button>😂</button>
-                    <button>😷</button>
-                    <button>🫠</button>
-                    <button>🤮</button>
-                    <button>🌚</button>
-                    <button>🚀</button>
-                    <button>🐵</button>
-                    <button>🇺🇦</button>
+                    <button id="q">1</button>
+                    <button id="w">2</button>
+                    <button id="e">3</button>
+                    <button id="r">4</button>
+                    <button id="t">5</button>
+                    <button id="y">6</button>
+                    <button id="u">7</button>
+                    <button id="i">8</button>
+                    <button id="o">9</button>
+                    <button id="p">0</button>
                 </div>
                 <div class="keyboard" id="operators">
-                    <button>⩼</button>
-                    <button>⦞</button>
-                    <button>⩐</button>
-                    <button>⌭</button>
+                    <button id="a"> </button>
+                    <button id="s"> </button>
+                    <button id="d"> </button>
+                    <button id="f">⩼</button>
+                    <button id="g">⦞</button>
+                    <button id="h">⩐</button>
+                    <button id="j">⌭</button>
+                    <button id="k"> </button>
+                    <button id="l"> </button>
+                    <button id=","> </button>
+                </div>
+                <div class="keyboard" id="emojis">
+                    <button id="z">💩</button>
+                    <button id="x">😎</button>
+                    <button id="c">😂</button>
+                    <button id="v">😷</button>
+                    <button id="b">🫠</button>
+                    <button id="n">🤮</button>
+                    <button id="m">🌚</button>
+                    <button id="ä">🚀</button>
+                    <button id="ö">🐵</button>
+                    <button id="-">🇺🇦</button>
                 </div>
             </div>
             <div id="commands">
@@ -141,6 +147,21 @@
         </div>
     </body>
     <script charset="utf-8">
+            const hotkeys = (e) => {
+                const windowEvent = window.event ? event : e;
+                const code = windowEvent.keyCode;
+                if (code === 8) {
+                    return clr();
+                } else if (code === 13) {
+                    return emojify();
+                }
+                const key = String.fromCharCode(code).toLocaleLowerCase();
+                const elem = document.getElementById(key);
+                if (elem) {
+                    elem.click();
+                }
+            };
+            document.onkeydown = hotkeys;
             const addCharacter = (char) => {
                 document.getElementById("command").value += char;
             };
