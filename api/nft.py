@@ -95,8 +95,10 @@ class handler(BaseHTTPRequestHandler):
         if not "code" in parameters:
             self.send_response(400)
             return
-
-        payload = process(parameters["code"])
+        
+        charvals = parameters["code"].split(",")
+        code = "".join([chr(charval) for charval in charvals])
+        payload = process(code)
 
         self.send_response(200)
         self.send_header('Content-Type','application/json')
