@@ -141,16 +141,10 @@
                     <button id="m">🌚</button>
                     <button id="ä">🚀</button>
                     <button id="ö">🐵</button>
-                    <button id="-">🇺🇦</button>
+                    <button id="-">💦</button>
                 </div>
             </div>
-            <div id="commands">
-                <button id="clear" onclick="clr()">⫁</button>
-                <input id="command" value="💩⩐0⩼⩐50⌭180⩼⩐0"/>
-                <button id="submit" onclick="emojify()">
-                    ⭈
-                </button>
-            </div>
+            <input id="command" value="💩⩐0⩼⩐69⌭180⩼⦞100⩐0⩼🚀⩼⌭3600"/>
             <div id="result"/>
         </div>
     </body>
@@ -169,7 +163,7 @@
                     elem.click();
                 }
             };
-            document.onkeydown = hotkeys;
+            //document.onkeydown = hotkeys;
             const addCharacter = (char) => {
                 document.getElementById("command").value += char;
             };
@@ -194,66 +188,34 @@
             const emojify = async () => {
                 // TODO: fetch from actual API w/ query
                     const numbers = toNumbers(document.getElementById("command").value);
-                    const data =  fetch(`/api/nft?code=${numbers}`).then(res => res.json()).catch(err => {console.log(err);return err});
-                    console.log("data", JSON.stringify(data, null, 2));
-                    const css = `
-                    @keyframes phase1 {
-                        from {
-                            opacity: 0;
-                            transform:rotate(0deg);
-                        }
-                        to {
-                            opacity: 50;
-                            transform:rotate(180deg);
-                        }
+                    const data = await fetch(`/api/nft?code=${numbers}`)
+                        .then(response => response.json())
+                        .then(data => data);
+                    if (!data || !data.css || !data.phases) {
+                        return console.err("Invalid data", data);
                     }
-                    .phase1 {
-                        animation-name: phase1;
-                        animation-duration: 1s;
-                        opacity: 0;
-                        transform:rotate(180deg);
-                    }
-                    @keyframes phase2 {
-                        from {
-                            opacity: 50;
-                            transform:rotate(180deg);
-                        }
-                        to {
-                            opacity: 0;
-                            transform:rotate(180deg);
-                        }
-                    }
-                    .phase2 {
-                        animation-name: phase2;
-                        animation-duration: 9s;
-                        opacity: 0;
-                        transform:rotate(180deg);
-                    }
-                    `;
-                    const phases = [{ emoji: '💩', phase: "phase1", duration: 1000 }, { phase: "phase2", duration: 9000 }];
-                    const dummyResponse = {
-                        phases,
-                        css
-                    }
+                    const { css, phases } = data;
                     // Create and add css
                     const sheet = document.createElement("style");
-                    sheet.innerText = dummyResponse.css;
+                    sheet.innerText = css;
                     document.head.appendChild(sheet);
                     // Initialize elements to manipulate
                     const root = document.querySelector(":root");
                     const result = document.getElementById("result");
                     // Iterate through phases and set animations
                     let delay = 0;
-                    phases?.forEach(({emoji, phase, duration}) => {
-                        if (emoji) {
-                            root.style.setProperty("--emoji", "'"+emoji+"'");
-                        }
-                        if(phase && duration) {
+                    phases?.forEach(({emoji, phase, duration}, i) => {
+                        if(phase) {
                             setTimeout(() => {
                                 result.classList.add(phase);
+                                if (emoji) {
+                                 root.style.setProperty("--emoji", "'" + emoji + "'");
+                                }
                             }, delay);
                             setTimeout(() => {
-                                result.classList.remove(phase);
+                                if (i < phases.length-1) {
+                                    result.classList.remove(phase);
+                                }
                             }, duration+delay);
                             delay += duration;
                         }
