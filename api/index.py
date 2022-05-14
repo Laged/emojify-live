@@ -91,7 +91,7 @@ def process(code: str) -> str:
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        parameters = dict(parse.parse_qsl(parse.urlsplit(s).query))
+        parameters = dict(parse.parse_qsl(parse.urlsplit(self.path).query))
         if not "code" in parameters:
             self.send_response(400)
             return
