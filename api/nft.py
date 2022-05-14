@@ -12,7 +12,7 @@ known_operations = {
 }
 
 # 0: Phase number, 1: duration, 2: opacity from, 3: opacity to, 4: rotation from, 5: rotation to
-csstemplate = "@keyframes phase{0} {{from {{opacity: {2}; transform: rotate({4}deg);}} to {{opacity: {3}; transform:rotate({5}deg);}}}} .phase{0} {{animation-name: phase{0}; animation-duration: {1}s; opacity: {4}; transform:rotate({5}deg);}} "
+csstemplate = "@keyframes phase{0} {{from {{opacity: {2}; transform: rotate({4}deg);}} to {{opacity: {3}; transform:rotate({5}deg);}}}} .phase{0} {{animation-name: phase{0}; animation-duration: {1}s; opacity: {3}; transform:rotate({5}deg);}} "
 
 
 def clean(code: str) -> str:
