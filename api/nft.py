@@ -71,7 +71,7 @@ def cssify(tokens: list) -> str:
         duration = int(part["speed"])/1000 if "speed" in part else 1
         phase["duration"] = duration
         
-        newrotation = int(part["rotation"]) if "rotate" in part else rotation
+        newrotation = int(part["rotate"]) if "rotate" in part else rotation
         newopacity = int(part["opacity"])/100 if "opacity" in part else opacity
         
         css += csstemplate.format(i, duration, opacity, newopacity, rotation, newrotation)
