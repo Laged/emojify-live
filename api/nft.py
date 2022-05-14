@@ -65,10 +65,13 @@ def cssify(tokens: list) -> str:
 
     for i, part in enumerate(tokens):
         phase = {"phase":f"phase{i}"}
-        if "emoji" in part:
-            phase["emoji"] = part["emoji"]
         
         duration = int(part["speed"])/1000 if "speed" in part else 1
+        
+        if "emoji" in part:
+            phase["emoji"] = part["emoji"]
+            duration = 0
+        
         phase["duration"] = duration*1000
         
         newrotation = int(part["rotate"]) if "rotate" in part else rotation
