@@ -91,12 +91,12 @@ def process(code: str) -> str:
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        parameters = dict(parse.parse_qsl(parse.urlsplit(parse.unquote(self.path)).query))
+        parameters = dict(parse.parse_qsl(parse.urlsplit(self.path).query))
         if not "code" in parameters:
             self.send_response(400)
             return
         
-        charvals = parameters["code"].split(",")
+        charvals = parse.unquote(parameters["code"]).split(",")
         code = "".join([chr(int(charval)) for charval in charvals])
         payload = process(code)
 
