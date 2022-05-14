@@ -1,0 +1,57 @@
+{
+    "name": "emojify-lsp",
+    "displayName": "emojify-lsp",
+    "description": "",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.67.0"
+    },
+    "activationEvents": [
+        "onCommand:emojify.start",
+        "onCommand:emojify.sendSelection"
+    ],
+    "main": "./out/extension.js",
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "emojify.start",
+                "title": "Start coding session",
+                "category": "Emoji Coding"
+            },
+            {
+                "command": "emojify.sendSelection",
+                "title": "Send selection to webview",
+                "category": "Emoji Coding"
+            }
+        ],
+        "languages": [{
+            "id": "emojify",
+            "aliases": ["Emojify", "emojify"],
+            "extensions": [".emoji"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "emojify",
+            "scopeName": "source.emojify",
+            "path": "./syntaxes/emojify.tmLanguage.json"
+        }]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint . --ext .ts,.tsx",
+		"watch": "tsc -w -p ./"
+      },
+      "devDependencies": {
+		"@types/node": "^12.12.0",
+		"@types/vscode": "^1.47.0",
+		"@types/vscode-webview": "^1.57.0",
+		"@typescript-eslint/eslint-plugin": "^5.19.0",
+		"@typescript-eslint/parser": "^5.19.0",
+		"eslint": "^8.13.0",
+		"typescript": "^4.6.3"
+	}
+}
