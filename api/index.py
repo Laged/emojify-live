@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 import emoji
 import json
+from http.server import BaseHTTPRequestHandler
+from urllib import parse
 
 
 known_operations = {
@@ -80,11 +82,33 @@ def cssify(tokens: list) -> str:
     return json.dumps({"phases":phases, "css":css})
 
 
-def main():
-    code = input("Values to parse: ")
+def process(code: str) -> str:
     code = clean(code)
     tokens = tokenize(code)
     payload = cssify(tokens)
+    return payload
+
+
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        parameters = dict(parse.parse_qsl(parse.urlsplit(s).query))
+        if not "code" in parameters:
+            self.send_response(400)
+            return
+
+        payload = process(parameters["code"])
+
+        self.send_response(200)
+        self.send_header('Content-Type','application/json')
+        self.end_headers()
+        self.wfile.write(payload.encode())
+        return
+
+
+
+def main():
+    code = input("Values to parse: ")
+    payload = process(code)
     print(payload)
 
 
