@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import emoji
 import json
-import sys
 from http.server import BaseHTTPRequestHandler
 from urllib import parse
 
@@ -18,7 +17,7 @@ csstemplate = "@keyframes phase{0} {{from {{opacity: {2}; transform: rotate({4}d
 
 def clean(code: str) -> str:
     code.replace(" ", "")
-    parts = code.split("⩼")
+    parts = code.split("⩼") 
     return parts
 
 
@@ -27,12 +26,12 @@ def tokenize(parts: list) -> list:
     tokenlist = []
     for part in parts:
         operations = {}
-
+        
         newsection = emoji.is_emoji(part[0])  # If the part starts with an emoji, it defines a new section
         if newsection: operations["emoji"] = part[0]
-
+        
         i = int(newsection)   # Iterate through part, ignoring the first emoji
-        while i < len(part):  # Not pythonic, but seems to be the most efficient method
+        while i < len(part):  # Not pythonic, but seems to be the most efficient method 
             operation = part[i]
             if not operation in known_operations:
                 raise SyntaxError("Invalid operation " + operation)
@@ -52,7 +51,7 @@ def tokenize(parts: list) -> list:
             operations[known_operations[operation]["name"]] = operand
 
         tokenlist.append(operations)
-
+    
     #print(tokenlist)
     return tokenlist
 
@@ -60,17 +59,17 @@ def tokenize(parts: list) -> list:
 def cssify(tokens: list) -> str:
     opacity = 1
     rotation = 0
-
+    
     phases = []   # List of phases for JS logic
     css = """"""  # Multiline CSS string
 
     for i, part in enumerate(tokens):
         phase = {"phase":f"phase{i}"}
-
+        
         duration = int(part["speed"])/1000 if "speed" in part else 1
         newrotation = int(part["rotate"]) if "rotate" in part else rotation
         newopacity = int(part["opacity"])/100 if "opacity" in part else opacity
-
+        
         if "emoji" in part:
             phase["emoji"] = part["emoji"]
             duration = 0
@@ -78,10 +77,10 @@ def cssify(tokens: list) -> str:
             rotation = 0
             newopacity = 1
             opacity = 1
-
-        phase["duration"] = duration*1000
+        
+        phase["duration"] = duration*1000        
         css += csstemplate.format(i, duration, opacity, newopacity, rotation, newrotation)
-
+        
         rotation = newrotation
         opacity = newopacity
 
@@ -103,7 +102,7 @@ class handler(BaseHTTPRequestHandler):
         if not "code" in parameters:
             self.send_response(400)
             return
-
+        
         charvals = parse.unquote(parameters["code"]).split(",")
         code = "".join([chr(int(charval)) for charval in charvals])
         payload = process(code)
@@ -116,7 +115,8 @@ class handler(BaseHTTPRequestHandler):
 
 
 def main():
-    payload = process(sys.argv[1])
+    code = input("Values to parse: ")
+    payload = process(code)
     print(payload)
 
 
