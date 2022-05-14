@@ -69,7 +69,7 @@ def cssify(tokens: list) -> str:
             phase["emoji"] = part["emoji"]
         
         duration = int(part["speed"])/1000 if "speed" in part else 1
-        phase["duration"] = duration
+        phase["duration"] = duration*1000
         
         newrotation = int(part["rotate"]) if "rotate" in part else rotation
         newopacity = int(part["opacity"])/100 if "opacity" in part else opacity
