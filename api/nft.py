@@ -7,7 +7,7 @@ from urllib import parse
 
 known_operations = {
         "⌭" : {"name" : "rotate", "operand" : "int"},
-        "⨳" : {"name" : "compose", "operand" : "emoji"},
+        "⦞" : {"name" : "speed", "operand" : "int"},
         "⩐" : {"name" : "opacity", "operand" : "int"}
 }
 
@@ -57,22 +57,24 @@ def tokenize(parts: list) -> list:
 
 
 def cssify(tokens: list) -> str:
-    opacity = 100
+    opacity = 1
     rotation = 0
     
     phases = []   # List of phases for JS logic
     css = """"""  # Multiline CSS string
 
     for i, part in enumerate(tokens):
-        phase = {"phase":f"phase{i}", "duration":1000}
+        phase = {"phase":f"phase{i}"}
         if "emoji" in part:
             phase["emoji"] = part["emoji"]
-
         
-        newrotation = part["rotation"] if "rotation" in part else rotation
-        newopacity = part["opacity"] if "opacity" in part else opacity
+        duration = int(part["speed"])/1000 if "speed" in part else 1
+        phase["duration"] = duration
         
-        css += csstemplate.format(i, 1000, opacity, newopacity, rotation, newrotation)
+        newrotation = int(part["rotation"]) if "rotate" in part else rotation
+        newopacity = int(part["opacity"])/100 if "opacity" in part else opacity
+        
+        css += csstemplate.format(i, duration, opacity, newopacity, rotation, newrotation)
         
         rotation = newrotation
         opacity = newopacity
