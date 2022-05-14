@@ -33,24 +33,53 @@
             }
             #commands {
                 display: grid;
-                grid-template-columns: 1fr 10ch;
+                grid-template-columns: 3ch 1fr 6ch;
                 grid-auto-flow: row;
                 gap: 1rem;
                 background-color: #fff;
             }
-            #command, #submit {
-                border: 1px solid #000000;
-
-                font-size: large;
+            #clear, #command, #submit {
+                font-size: x-large;
+            }
+            #command {
+                border: 1px solid black;
+                margin: 0.2rem;
             }
             #submit {
-                border-radius: 1rem;
                 padding: 0.2rem;
                 background-color: #fff;
                 font-size: large;
             }
             #emojify {
                 border: 1px solid #000000;
+            }
+            #keyboards {
+                display: grid;
+                gap: 0.5rem;
+            }
+            #keyboards > div {
+                display: grid;
+                grid-template-columns: repeat(10, 3ch);
+                gap: 0.5rem;
+            }
+            #keyboards > div > button {
+                font-family: monospace;
+                font-size: 2ch;
+                width: 3ch;
+                height: 3ch;
+                padding: 0;
+            }
+            button {
+                border: 1px solid black;
+                border-right: 2px solid black;
+                border-bottom: 2px solid black;
+                border-radius: 0.5rem;
+            }
+            button:hover {
+                border: 2px solid black;
+            }
+            button:active {
+                transform: translateY(0.1rem)
             }
             #result {
                 font-size: 20ch;
@@ -69,80 +98,133 @@
                     emojify.live
                 </h1>
             </div>
+            <div id="keyboards">
+                <div class="keyboard" id="numbers">
+                    <button>1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <button>4</button>
+                    <button>5</button>
+                    <button>6</button>
+                    <button>7</button>
+                    <button>8</button>
+                    <button>9</button>
+                    <button>0</button>
+                </div>
+                <div class="keyboard" id="emojis">
+                    <button>💩</button>
+                    <button>😎</button>
+                    <button>😂</button>
+                    <button>😷</button>
+                    <button>🫠</button>
+                    <button>🤮</button>
+                    <button>🌚</button>
+                    <button>🚀</button>
+                    <button>🐵</button>
+                    <button>🇺🇦</button>
+                </div>
+                <div class="keyboard" id="operators">
+                    <button>⩼</button>
+                    <button>⦞</button>
+                    <button>⩐</button>
+                    <button>⌭</button>
+                </div>
+            </div>
             <div id="commands">
+                <button id="clear" onclick="clr()">⫁</button>
                 <input id="command" value="💩⩐0⩼⩐50⌭180⩼⩐0"/>
                 <button id="submit" onclick="emojify()">
-                    Emojify
+                    ⭈
                 </button>
             </div>
             <div id="result"/>
         </div>
     </body>
     <script charset="utf-8">
-            const emojify = () => {
-                // TODO: fetch from actual API w/ query
-                const css = `
-                @keyframes phase1 {
-                    from {
-                        opacity: 0;
-                        transform:rotate(0deg); 
-                    }
-                    to {
-                        opacity: 50;
-                        transform:rotate(180deg);
-                    }
-                }
-                .phase1 {
-                    animation-name: phase1;
-                    animation-duration: 1s;
-                    opacity: 0;
-                    transform:rotate(180deg);
-                }
-                @keyframes phase2 {
-                    from {
-                        opacity: 50;
-                        transform:rotate(180deg);
-                    }
-                    to {
-                        opacity: 0;
-                        transform:rotate(180deg);
-                    }
-                }
-                .phase2 {
-                    animation-name: phase2;
-                    animation-duration: 9s;
-                    opacity: 0;
-                    transform:rotate(180deg);
-                }
-                `;
-                const phases = [{ emoji: '💩', phase: "phase1", duration: 1000 }, { phase: "phase2", duration: 9000 }];
-                const dummyResponse = {
-                    phases,
-                    css
-                }
-                // Create and add css
-                const sheet = document.createElement("style");
-                sheet.innerText = dummyResponse.css;
-                document.head.appendChild(sheet);
-                // Initialize elements to manipulate
-                const root = document.querySelector(":root");
-                const result = document.getElementById("result");
-                // Iterate through phases and set animations
-                let delay = 0;
-                phases?.forEach(({emoji, phase, duration}) => {
-                    if (emoji) {
-                        root.style.setProperty("--emoji", "'"+emoji+"'");
-                    }
-                    if(phase && duration) {
-                        setTimeout(() => {
-                            result.classList.add(phase);
-                        }, delay);
-                        setTimeout(() => {
-                            result.classList.remove(phase);
-                        }, duration+delay);
-                        delay += duration;
-                    }
+            const addCharacter = (char) => {
+                document.getElementById("command").value += char;
+            };
+            const keyboards = document.querySelectorAll(".keyboard");
+            keyboards?.forEach(keyboard => {
+                keyboard?.childNodes.forEach(button => {
+                    button.addEventListener("click", function (event) {
+                        addCharacter(event.target.innerText);
+                    });
                 });
-            }
-    </script>
-</html>
+            })
+            const toNumbers = (string) => {
+                return [...string].map(c => c.codePointAt(0)).join(",");
+            };
+            const clr = () => {
+                document.getElementById("command").value = "";
+            };
+            const emojify = async () => {
+                // TODO: fetch from actual API w/ query
+                    const numbers = toNumbers(document.getElementById("command").value);
+                    const data =  fetch(`/api/nft?code=${numbers}`).then(res => res.json()).catch(err => {console.log(err);return err});
+                    console.log("data", JSON.stringify(data, null, 2));
+                    const css = `
+                    @keyframes phase1 {
+                        from {
+                            opacity: 0;
+                            transform:rotate(0deg); 
+                        }
+                        to {
+                            opacity: 50;
+                            transform:rotate(180deg);
+                        }
+                    }
+                    .phase1 {
+                        animation-name: phase1;
+                        animation-duration: 1s;
+                        opacity: 0;
+                        transform:rotate(180deg);
+                    }
+                    @keyframes phase2 {
+                        from {
+                            opacity: 50;
+                            transform:rotate(180deg);
+                        }
+                        to {
+                            opacity: 0;
+                            transform:rotate(180deg);
+                        }
+                    }
+                    .phase2 {
+                        animation-name: phase2;
+                        animation-duration: 9s;
+                        opacity: 0;
+                        transform:rotate(180deg);
+                    }
+                    `;
+                    const phases = [{ emoji: '💩', phase: "phase1", duration: 1000 }, { phase: "phase2", duration: 9000 }];
+                    const dummyResponse = {
+                        phases,
+                        css
+                    }
+                    // Create and add css
+                    const sheet = document.createElement("style");
+                    sheet.innerText = dummyResponse.css;
+                    document.head.appendChild(sheet);
+                    // Initialize elements to manipulate
+                    const root = document.querySelector(":root");
+                    const result = document.getElementById("result");
+                    // Iterate through phases and set animations
+                    let delay = 0;
+                    phases?.forEach(({emoji, phase, duration}) => {
+                        if (emoji) {
+                            root.style.setProperty("--emoji", "'"+emoji+"'");
+                        }
+                        if(phase && duration) {
+                            setTimeout(() => {
+                                result.classList.add(phase);
+                            }, delay);
+                            setTimeout(() => {
+                                result.classList.remove(phase);
+                            }, duration+delay);
+                            delay += duration;
+                        }
+                    });
+                }
+                </script>
+                </html>
