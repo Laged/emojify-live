@@ -67,16 +67,18 @@ def cssify(tokens: list) -> str:
         phase = {"phase":f"phase{i}"}
         
         duration = int(part["speed"])/1000 if "speed" in part else 1
+        newrotation = int(part["rotate"]) if "rotate" in part else rotation
+        newopacity = int(part["opacity"])/100 if "opacity" in part else opacity
         
         if "emoji" in part:
             phase["emoji"] = part["emoji"]
             duration = 0
+            newrotation = 0
+            rotation = 0
+            newopacity = 1
+            opacity = 1
         
-        phase["duration"] = duration*1000
-        
-        newrotation = int(part["rotate"]) if "rotate" in part else rotation
-        newopacity = int(part["opacity"])/100 if "opacity" in part else opacity
-        
+        phase["duration"] = duration*1000        
         css += csstemplate.format(i, duration, opacity, newopacity, rotation, newrotation)
         
         rotation = newrotation
