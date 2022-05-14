@@ -97,7 +97,7 @@ class handler(BaseHTTPRequestHandler):
             return
         
         charvals = parameters["code"].split(",")
-        code = "".join([chr(charval) for charval in charvals])
+        code = "".join([chr(int(charval)) for charval in charvals])
         payload = process(code)
 
         self.send_response(200)
