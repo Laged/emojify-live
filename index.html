@@ -30,18 +30,18 @@
             }
             #title {
                 text-align: center;
+                display: grid;
             }
             #commands {
                 display: grid;
-                grid-template-columns: 3ch 1fr 6ch;
+                grid-template-columns: 3ch 6ch;
+                justify-content: space-between;
                 grid-auto-flow: row;
                 gap: 1rem;
                 background-color: #fff;
             }
-            #clear, #command, #submit {
-                font-size: x-large;
-            }
             #command {
+                font-size: x-large;
                 border: 1px solid black;
                 margin: 0.2rem;
             }
@@ -68,6 +68,11 @@
                 width: 3ch;
                 height: 3ch;
                 padding: 0;
+            }
+            #finish {
+                display: grid;
+                grid-template-columns: repeat(2, 3ch);
+                gap: 0.5rem;
             }
             button {
                 border: 1px solid black;
@@ -97,6 +102,9 @@
                 <h1 id="title">
                     emojify.live
                 </h1>
+                <a href="https://xkcd.com/2606/">
+                    ⫁
+                </a>
             </div>
             <div id="keyboards">
                 <div class="keyboard" id="numbers">
@@ -112,7 +120,7 @@
                     <button id="p">0</button>
                 </div>
                 <div class="keyboard" id="operators">
-                    <button id="a"> </button>
+                    <button id="a" onclick="clr()">⫁</button>
                     <button id="s"> </button>
                     <button id="d"> </button>
                     <button id="f">⩼</button>
@@ -120,8 +128,8 @@
                     <button id="h">⩐</button>
                     <button id="j">⌭</button>
                     <button id="k"> </button>
-                    <button id="l"> </button>
-                    <button id=","> </button>
+                    <button id="l" onclick="emojify()">⭈</button>
+                    <button id="," onclick="window.open('https://opensea.io/','_blank')">⍼</button>
                 </div>
                 <div class="keyboard" id="emojis">
                     <button id="z">💩</button>
@@ -136,13 +144,7 @@
                     <button id="-">💦</button>
                 </div>
             </div>
-            <div id="commands">
-                <button id="clear" onclick="clr()">⫁</button>
-                <input id="command" value="💩⩐0⩼⩐69⌭180⩼⦞100⩐0⩼🚀⩼⌭3600"/>
-                <button id="submit" onclick="emojify()">
-                    ⭈
-                </button>
-            </div>
+            <input id="command" value="💩⩐0⩼⩐69⌭180⩼⦞100⩐0⩼🚀⩼⌭3600"/>
             <div id="result"/>
         </div>
     </body>
@@ -168,9 +170,13 @@
             const keyboards = document.querySelectorAll(".keyboard");
             keyboards?.forEach(keyboard => {
                 keyboard?.childNodes.forEach(button => {
-                    button.addEventListener("click", function (event) {
-                        addCharacter(event.target.innerText);
-                    });
+                    console.log(button)
+                    console.log(button.id)
+                    if (!["a", ",", "l"].includes(button.id)) {
+                        button.addEventListener("click", function (event) {
+                            addCharacter(event.target.innerText);
+                        });
+                    }
                 });
             })
             const toNumbers = (string) => {
